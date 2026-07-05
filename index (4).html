@@ -1,0 +1,240 @@
+<!DOCTYPE html>
+<html lang="th">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Wasan Hub</title>
+<style>
+  :root{
+    --ink:#1c2b2d;
+    --paper:#eef2ee;
+    --line:#c7d1c8;
+    --accent:#2f6f5e;
+    --accent-soft:#e4efe9;
+    --side-w:220px;
+  }
+  *{box-sizing:border-box;}
+  html,body{margin:0;padding:0;height:100%;font-family:"Helvetica Neue",Arial,sans-serif;background:var(--paper);color:var(--ink);}
+
+  .app{
+    display:flex;
+    height:100vh;
+    width:100vw;
+    overflow:hidden;
+  }
+
+  /* Sidebar */
+  .sidebar{
+    width:var(--side-w);
+    flex-shrink:0;
+    background:var(--ink);
+    color:var(--paper);
+    display:flex;
+    flex-direction:column;
+    padding:20px 0;
+  }
+  .brand{
+    font-size:15px;
+    letter-spacing:.08em;
+    text-transform:uppercase;
+    font-weight:700;
+    padding:0 20px 20px;
+    border-bottom:1px solid rgba(255,255,255,.15);
+    margin-bottom:10px;
+  }
+  .brand span{color:var(--accent);}
+
+  .nav-item{
+    display:flex;
+    align-items:center;
+    gap:10px;
+    padding:14px 20px;
+    cursor:pointer;
+    font-size:14px;
+    color:rgba(255,255,255,.75);
+    border-left:3px solid transparent;
+    transition:background .15s ease, color .15s ease;
+    user-select:none;
+  }
+  .nav-item:hover{
+    background:rgba(255,255,255,.06);
+    color:#fff;
+  }
+  .nav-item.active{
+    background:rgba(255,255,255,.1);
+    color:#fff;
+    border-left-color:var(--accent);
+  }
+  .nav-dot{
+    width:6px;height:6px;border-radius:50%;
+    background:currentColor;
+    opacity:.6;
+    flex-shrink:0;
+  }
+
+  .sidebar-footer{
+    margin-top:auto;
+    padding:14px 20px;
+    font-size:11px;
+    color:rgba(255,255,255,.35);
+  }
+
+  /* Main area */
+  .main{
+    flex:1;
+    display:flex;
+    flex-direction:column;
+    min-width:0;
+  }
+  .topbar{
+    height:48px;
+    flex-shrink:0;
+    display:flex;
+    align-items:center;
+    justify-content:space-between;
+    padding:0 18px;
+    border-bottom:1px solid var(--line);
+    background:#fff;
+  }
+  .topbar-title{
+    font-size:14px;
+    font-weight:600;
+  }
+  .topbar-link{
+    font-size:12px;
+    color:var(--accent);
+    text-decoration:none;
+    border:1px solid var(--accent);
+    padding:4px 10px;
+    border-radius:5px;
+  }
+  .topbar-link:hover{ background:var(--accent-soft); }
+
+  .frame-wrap{
+    flex:1;
+    position:relative;
+    background:#fff;
+  }
+  iframe{
+    position:absolute;
+    top:0;left:0;
+    width:100%;
+    height:100%;
+    border:0;
+    background:#fff;
+  }
+  .hidden{ display:none; }
+
+  .loading{
+    position:absolute;
+    inset:0;
+    display:flex;
+    align-items:center;
+    justify-content:center;
+    font-size:13px;
+    color:#7a8a80;
+  }
+
+  /* Mobile */
+  @media (max-width:720px){
+    .app{ flex-direction:column; }
+    .sidebar{
+      width:100%;
+      flex-direction:row;
+      overflow-x:auto;
+      padding:10px 0;
+    }
+    .brand, .sidebar-footer{ display:none; }
+    .nav-item{
+      padding:10px 16px;
+      border-left:none;
+      border-bottom:3px solid transparent;
+      white-space:nowrap;
+    }
+    .nav-item.active{ border-left:none; border-bottom-color:var(--accent); }
+  }
+</style>
+</head>
+<body>
+
+<div class="app">
+  <div class="sidebar">
+    <div class="brand">Wasan <span>Hub</span></div>
+
+    <div class="nav-item active" data-target="dashboard">
+      <span class="nav-dot"></span> Dashboard
+    </div>
+    <div class="nav-item" data-target="nongwiu">
+      <span class="nav-dot"></span> Nongwiu
+    </div>
+    <div class="nav-item" data-target="invoice">
+      <span class="nav-dot"></span> Invoice
+    </div>
+
+    <div class="sidebar-footer">รวม 3 เว็บแอปไว้ที่เดียว</div>
+  </div>
+
+  <div class="main">
+    <div class="topbar">
+      <div class="topbar-title" id="topbar-title">Dashboard</div>
+      <a class="topbar-link" id="open-new-tab" href="https://wasant-print.github.io/wasandashboard/" target="_blank" rel="noopener">เปิดแท็บใหม่ ↗</a>
+    </div>
+
+    <div class="frame-wrap">
+      <div class="loading" id="loading-dashboard">กำลังโหลด Dashboard…</div>
+      <iframe id="frame-dashboard" src="https://wasant-print.github.io/wasandashboard/" onload="document.getElementById('loading-dashboard').style.display='none'"></iframe>
+
+      <div class="loading hidden" id="loading-nongwiu">กำลังโหลด Nongwiu…</div>
+      <iframe class="hidden" id="frame-nongwiu" data-src="https://wasant-print.github.io/nongwiu/" onload="document.getElementById('loading-nongwiu').style.display='none'"></iframe>
+
+      <div class="loading hidden" id="loading-invoice">กำลังโหลด Invoice…</div>
+      <iframe class="hidden" id="frame-invoice" data-src="https://wasant-print.github.io/wasaninvoice/" onload="document.getElementById('loading-invoice').style.display='none'"></iframe>
+    </div>
+  </div>
+</div>
+
+<script>
+  const sites = {
+    dashboard: { title: "Dashboard", url: "https://wasant-print.github.io/wasandashboard/" },
+    nongwiu:   { title: "Nongwiu",   url: "https://wasant-print.github.io/nongwiu/" },
+    invoice:   { title: "Invoice",   url: "https://wasant-print.github.io/wasaninvoice/" }
+  };
+
+  const navItems = document.querySelectorAll(".nav-item");
+  const titleEl = document.getElementById("topbar-title");
+  const newTabLink = document.getElementById("open-new-tab");
+
+  navItems.forEach(item => {
+    item.addEventListener("click", () => {
+      const target = item.dataset.target;
+
+      // update active nav state
+      navItems.forEach(n => n.classList.remove("active"));
+      item.classList.add("active");
+
+      // update topbar
+      titleEl.textContent = sites[target].title;
+      newTabLink.href = sites[target].url;
+
+      // show/hide frames, lazy-load on first click
+      Object.keys(sites).forEach(key => {
+        const frame = document.getElementById("frame-" + key);
+        const loading = document.getElementById("loading-" + key);
+        if (key === target) {
+          if (!frame.src) {
+            frame.src = frame.dataset.src;
+            loading.classList.remove("hidden");
+          }
+          frame.classList.remove("hidden");
+          loading.classList.toggle("hidden", !!frame.src && frame.src !== "");
+        } else {
+          frame.classList.add("hidden");
+          loading.classList.add("hidden");
+        }
+      });
+    });
+  });
+</script>
+
+</body>
+</html>
