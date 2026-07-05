@@ -6,11 +6,11 @@
 <title>Wasan Hub</title>
 <style>
   :root{
-    --ink:#1b4d75;
-    --paper:#f4f9fd;
-    --line:#cfe0ec;
-    --accent:#2f8fd9;
-    --accent-soft:#e8f3fb;
+    --ink:#1c2b2d;
+    --paper:#eef2ee;
+    --line:#c7d1c8;
+    --accent:#2f6f5e;
+    --accent-soft:#e4efe9;
     --side-w:220px;
     --side-w-tablet:76px;
     --tab-h:64px;
@@ -46,19 +46,7 @@
     overflow:hidden;
   }
   .app.collapsed .sidebar{
-    width:56px;
-  }
-  .app.collapsed .brand-text,
-  .app.collapsed .nav-label,
-  .app.collapsed .sidebar-footer{
     display:none;
-  }
-  .app.collapsed .nav-item{
-    justify-content:center;
-    padding:14px 0;
-  }
-  .app.collapsed .nav-dot{
-    width:9px; height:9px;
   }
   .brand{
     font-size:15px;
@@ -136,6 +124,8 @@
     align-items:center;
     gap:12px;
     min-width:0;
+    flex:1;
+    overflow:hidden;
   }
   .menu-toggle{
     flex-shrink:0;
@@ -152,6 +142,27 @@
   }
   .menu-toggle:hover{ background:var(--accent-soft); }
   .menu-toggle svg{ width:16px; height:16px; display:block; }
+  .topbar-brand{
+    flex-shrink:0;
+    border:none;
+    background:none;
+    padding:0;
+    cursor:pointer;
+    font-size:13px;
+    font-weight:700;
+    letter-spacing:.05em;
+    color:var(--ink);
+    display:flex;
+    align-items:baseline;
+    gap:3px;
+  }
+  .topbar-brand span{ color:var(--accent); }
+  .topbar-divider{
+    width:1px;
+    height:16px;
+    background:var(--line);
+    flex-shrink:0;
+  }
   .topbar-title{
     font-size:14px;
     font-weight:600;
@@ -200,23 +211,8 @@
     color:#7a8a80;
   }
 
-  /* Tablet (iPad portrait/landscape, small laptops) */
+  /* Tablet (iPad portrait/landscape, small laptops): same layout as desktop, full labels */
   @media (max-width:1024px) and (min-width:721px){
-    :root{ --side-w: var(--side-w-tablet); }
-    .brand{ font-size:0; padding:0 0 16px; }
-    .brand::after{
-      content:"WH";
-      font-size:14px;
-    }
-    .nav-item{
-      flex-direction:column;
-      gap:6px;
-      padding:14px 6px;
-      font-size:11px;
-      text-align:center;
-    }
-    .nav-label{ white-space:normal; line-height:1.2; }
-    .sidebar-footer{ display:none; }
     .topbar-title{ font-size:15px; }
   }
 
@@ -258,10 +254,6 @@
     .nav-label{ white-space:nowrap; }
 
     .topbar-link{ font-size:11px; padding:5px 9px; }
-
-    .app.collapsed .sidebar{
-      display:none;
-    }
   }
 
   /* Landscape phones: slightly tighter tab bar */
@@ -299,6 +291,8 @@
             <line x1="4" y1="17" x2="20" y2="17"></line>
           </svg>
         </button>
+        <button class="topbar-brand" id="topbar-brand" title="กลับไปหน้ารวมเว็บแอป">WASAN <span>HUB</span></button>
+        <div class="topbar-divider"></div>
         <div class="topbar-title" id="topbar-title">Dashboard</div>
       </div>
       <a class="topbar-link" id="open-new-tab" href="https://wasant-print.github.io/wasandashboard/" target="_blank" rel="noopener">เปิดแท็บใหม่ ↗</a>
@@ -329,6 +323,7 @@
   const newTabLink = document.getElementById("open-new-tab");
   const appEl = document.querySelector(".app");
   const menuToggle = document.getElementById("menu-toggle");
+  const topbarBrand = document.getElementById("topbar-brand");
 
   // restore saved collapse preference
   try {
@@ -337,11 +332,22 @@
     }
   } catch (e) { /* localStorage unavailable, ignore */ }
 
-  menuToggle.addEventListener("click", () => {
-    appEl.classList.toggle("collapsed");
+  function saveCollapsedState() {
     try {
       localStorage.setItem("wasanhub_collapsed", appEl.classList.contains("collapsed") ? "1" : "0");
     } catch (e) { /* ignore */ }
+  }
+
+  // hamburger: toggle open/closed
+  menuToggle.addEventListener("click", () => {
+    appEl.classList.toggle("collapsed");
+    saveCollapsedState();
+  });
+
+  // brand name: always brings the menu back (go to hub mode)
+  topbarBrand.addEventListener("click", () => {
+    appEl.classList.remove("collapsed");
+    saveCollapsedState();
   });
 
   navItems.forEach(item => {
