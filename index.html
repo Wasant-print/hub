@@ -2,23 +2,33 @@
 <html lang="th">
 <head>
 <meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
 <title>Wasan Hub</title>
 <style>
   :root{
-    --ink:#1c2b2d;
-    --paper:#eef2ee;
-    --line:#c7d1c8;
-    --accent:#2f6f5e;
-    --accent-soft:#e4efe9;
+    --ink:#1b4d75;
+    --paper:#f4f9fd;
+    --line:#cfe0ec;
+    --accent:#2f8fd9;
+    --accent-soft:#e8f3fb;
     --side-w:220px;
+    --side-w-tablet:76px;
+    --tab-h:64px;
   }
-  *{box-sizing:border-box;}
-  html,body{margin:0;padding:0;height:100%;font-family:"Helvetica Neue",Arial,sans-serif;background:var(--paper);color:var(--ink);}
+  *{box-sizing:border-box; -webkit-tap-highlight-color:transparent;}
+  html,body{
+    margin:0;padding:0;
+    height:100%;
+    font-family:"Helvetica Neue",Arial,sans-serif;
+    background:var(--paper);
+    color:var(--ink);
+    overscroll-behavior:none;
+  }
 
   .app{
     display:flex;
     height:100vh;
+    height:100dvh; /* actual visible height on mobile browsers */
     width:100vw;
     overflow:hidden;
   }
@@ -32,6 +42,23 @@
     display:flex;
     flex-direction:column;
     padding:20px 0;
+    transition:width .18s ease;
+    overflow:hidden;
+  }
+  .app.collapsed .sidebar{
+    width:56px;
+  }
+  .app.collapsed .brand-text,
+  .app.collapsed .nav-label,
+  .app.collapsed .sidebar-footer{
+    display:none;
+  }
+  .app.collapsed .nav-item{
+    justify-content:center;
+    padding:14px 0;
+  }
+  .app.collapsed .nav-dot{
+    width:9px; height:9px;
   }
   .brand{
     font-size:15px;
@@ -49,12 +76,14 @@
     align-items:center;
     gap:10px;
     padding:14px 20px;
+    min-height:48px; /* comfortable touch target */
     cursor:pointer;
     font-size:14px;
     color:rgba(255,255,255,.75);
     border-left:3px solid transparent;
     transition:background .15s ease, color .15s ease;
     user-select:none;
+    -webkit-touch-callout:none;
   }
   .nav-item:hover{
     background:rgba(255,255,255,.06);
@@ -71,6 +100,7 @@
     opacity:.6;
     flex-shrink:0;
   }
+  .nav-label{ white-space:nowrap; }
 
   .sidebar-footer{
     margin-top:auto;
@@ -93,20 +123,52 @@
     align-items:center;
     justify-content:space-between;
     padding:0 18px;
+    padding-top:env(safe-area-inset-top);
+    height:calc(48px + env(safe-area-inset-top));
     border-bottom:1px solid var(--line);
     background:#fff;
+    position:relative;
+    z-index:2;
+    gap:12px;
   }
+  .topbar-left{
+    display:flex;
+    align-items:center;
+    gap:12px;
+    min-width:0;
+  }
+  .menu-toggle{
+    flex-shrink:0;
+    width:32px;
+    height:32px;
+    border:1px solid var(--line);
+    background:#fff;
+    border-radius:6px;
+    display:flex;
+    align-items:center;
+    justify-content:center;
+    cursor:pointer;
+    padding:0;
+  }
+  .menu-toggle:hover{ background:var(--accent-soft); }
+  .menu-toggle svg{ width:16px; height:16px; display:block; }
   .topbar-title{
     font-size:14px;
     font-weight:600;
+    overflow:hidden;
+    text-overflow:ellipsis;
+    white-space:nowrap;
   }
   .topbar-link{
     font-size:12px;
     color:var(--accent);
     text-decoration:none;
     border:1px solid var(--accent);
-    padding:4px 10px;
+    padding:6px 12px;
     border-radius:5px;
+    min-height:32px;
+    display:inline-flex;
+    align-items:center;
   }
   .topbar-link:hover{ background:var(--accent-soft); }
 
@@ -114,6 +176,8 @@
     flex:1;
     position:relative;
     background:#fff;
+    -webkit-overflow-scrolling:touch;
+    overflow:hidden;
   }
   iframe{
     position:absolute;
@@ -122,6 +186,7 @@
     height:100%;
     border:0;
     background:#fff;
+    -webkit-overflow-scrolling:touch;
   }
   .hidden{ display:none; }
 
@@ -135,23 +200,73 @@
     color:#7a8a80;
   }
 
-  /* Mobile */
+  /* Tablet (iPad portrait/landscape, small laptops) */
+  @media (max-width:1024px) and (min-width:721px){
+    :root{ --side-w: var(--side-w-tablet); }
+    .brand{ font-size:0; padding:0 0 16px; }
+    .brand::after{
+      content:"WH";
+      font-size:14px;
+    }
+    .nav-item{
+      flex-direction:column;
+      gap:6px;
+      padding:14px 6px;
+      font-size:11px;
+      text-align:center;
+    }
+    .nav-label{ white-space:normal; line-height:1.2; }
+    .sidebar-footer{ display:none; }
+    .topbar-title{ font-size:15px; }
+  }
+
+  /* Phone: bottom tab bar, app-like */
   @media (max-width:720px){
     .app{ flex-direction:column; }
+
+    .main{ order:1; }
+
     .sidebar{
+      order:2;
       width:100%;
       flex-direction:row;
-      overflow-x:auto;
-      padding:10px 0;
+      justify-content:space-around;
+      align-items:stretch;
+      padding:4px 0 max(4px, env(safe-area-inset-bottom));
+      position:sticky;
+      bottom:0;
+      flex-shrink:0;
+      box-shadow:0 -2px 8px rgba(0,0,0,.15);
     }
     .brand, .sidebar-footer{ display:none; }
+
     .nav-item{
-      padding:10px 16px;
+      flex:1;
+      flex-direction:column;
+      justify-content:center;
+      gap:4px;
+      padding:8px 4px;
+      min-height:52px;
+      font-size:11px;
+      text-align:center;
       border-left:none;
-      border-bottom:3px solid transparent;
+      border-top:3px solid transparent;
       white-space:nowrap;
     }
-    .nav-item.active{ border-left:none; border-bottom-color:var(--accent); }
+    .nav-item.active{ border-left:none; border-top-color:var(--accent); background:rgba(255,255,255,.08); }
+    .nav-dot{ width:8px; height:8px; }
+    .nav-label{ white-space:nowrap; }
+
+    .topbar-link{ font-size:11px; padding:5px 9px; }
+
+    .app.collapsed .sidebar{
+      display:none;
+    }
+  }
+
+  /* Landscape phones: slightly tighter tab bar */
+  @media (max-width:720px) and (orientation:landscape){
+    .nav-item{ min-height:44px; padding:6px 4px; }
   }
 </style>
 </head>
@@ -159,16 +274,16 @@
 
 <div class="app">
   <div class="sidebar">
-    <div class="brand">Wasan <span>Hub</span></div>
+    <div class="brand"><span class="brand-text">Wasan <span>Hub</span></span></div>
 
     <div class="nav-item active" data-target="dashboard">
-      <span class="nav-dot"></span> Dashboard
+      <span class="nav-dot"></span><span class="nav-label">Dashboard</span>
     </div>
     <div class="nav-item" data-target="nongwiu">
-      <span class="nav-dot"></span> Nongwiu
+      <span class="nav-dot"></span><span class="nav-label">Nongwiu</span>
     </div>
     <div class="nav-item" data-target="invoice">
-      <span class="nav-dot"></span> Invoice
+      <span class="nav-dot"></span><span class="nav-label">Invoice</span>
     </div>
 
     <div class="sidebar-footer">รวม 3 เว็บแอปไว้ที่เดียว</div>
@@ -176,7 +291,16 @@
 
   <div class="main">
     <div class="topbar">
-      <div class="topbar-title" id="topbar-title">Dashboard</div>
+      <div class="topbar-left">
+        <button class="menu-toggle" id="menu-toggle" aria-label="ย่อ/ขยายเมนู" title="ย่อ/ขยายเมนู">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round">
+            <line x1="4" y1="7" x2="20" y2="7"></line>
+            <line x1="4" y1="12" x2="20" y2="12"></line>
+            <line x1="4" y1="17" x2="20" y2="17"></line>
+          </svg>
+        </button>
+        <div class="topbar-title" id="topbar-title">Dashboard</div>
+      </div>
       <a class="topbar-link" id="open-new-tab" href="https://wasant-print.github.io/wasandashboard/" target="_blank" rel="noopener">เปิดแท็บใหม่ ↗</a>
     </div>
 
@@ -203,6 +327,22 @@
   const navItems = document.querySelectorAll(".nav-item");
   const titleEl = document.getElementById("topbar-title");
   const newTabLink = document.getElementById("open-new-tab");
+  const appEl = document.querySelector(".app");
+  const menuToggle = document.getElementById("menu-toggle");
+
+  // restore saved collapse preference
+  try {
+    if (localStorage.getItem("wasanhub_collapsed") === "1") {
+      appEl.classList.add("collapsed");
+    }
+  } catch (e) { /* localStorage unavailable, ignore */ }
+
+  menuToggle.addEventListener("click", () => {
+    appEl.classList.toggle("collapsed");
+    try {
+      localStorage.setItem("wasanhub_collapsed", appEl.classList.contains("collapsed") ? "1" : "0");
+    } catch (e) { /* ignore */ }
+  });
 
   navItems.forEach(item => {
     item.addEventListener("click", () => {
