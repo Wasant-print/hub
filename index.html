@@ -290,6 +290,18 @@
 
     /* main no longer reserves space for the (now floating) topbar */
     .main{ position:relative; }
+
+    /* force the collapsed bottom bar to actually take zero space, not just zero width */
+    .app.collapsed .sidebar{
+      width:0;
+      height:0;
+      min-height:0;
+      padding:0;
+      margin:0;
+      border:0;
+      box-shadow:none;
+      overflow:hidden;
+    }
   }
 
   /* Landscape phones: slightly tighter tab bar */
