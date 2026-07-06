@@ -257,6 +257,39 @@
     .nav-label{ white-space:nowrap; }
 
     .topbar-link{ font-size:11px; padding:5px 9px; }
+
+    /* Topbar becomes a small floating pill instead of a bar that steals height */
+    .topbar{
+      position:fixed;
+      top:calc(8px + env(safe-area-inset-top));
+      left:8px;
+      right:8px;
+      height:auto;
+      padding:0;
+      background:transparent;
+      border:none;
+      z-index:15;
+      pointer-events:none; /* let taps pass through the empty gap between pills */
+    }
+    .topbar-left{
+      flex:0 1 auto;
+      background:rgba(255,255,255,.95);
+      border-radius:20px;
+      padding:6px 10px;
+      box-shadow:0 2px 8px rgba(0,0,0,.18);
+      pointer-events:auto;
+    }
+    .topbar-divider, .topbar-title{ display:none; }
+    .topbar-brand{ font-size:12px; }
+    .menu-toggle{ width:26px; height:26px; border:none; }
+    .topbar-link{
+      pointer-events:auto;
+      background:rgba(255,255,255,.95);
+      box-shadow:0 2px 8px rgba(0,0,0,.18);
+    }
+
+    /* main no longer reserves space for the (now floating) topbar */
+    .main{ position:relative; }
   }
 
   /* Landscape phones: slightly tighter tab bar */
